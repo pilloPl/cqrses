@@ -35,19 +35,21 @@ public class CreditCard {
     }
 
     private CreditCard handleNext(DomainEvent domainEvent) {
-        return API.Match(domainEvent).of(
+        CreditCard of = API.Match(domainEvent).of(
                 Case($(Predicates.instanceOf(LimitAssigned.class)), this::limitAssigned),
                 Case($(Predicates.instanceOf(CardWithdrawn.class)), this::cardWithdrawn),
                 Case($(Predicates.instanceOf(CardRepaid.class)), this::cardRepaid),
                 Case($(Predicates.instanceOf(CycleClosed.class)), this::cycleClosed)
         );
+        of.eventsFlushed();
+        return of;
     }
 
     public void assignLimit(BigDecimal amount) {
         if (limitWasAlreadyAssigned()) {
             throw new IllegalStateException();
         }
-        limitAssigned(new LimitAssigned(uuid, amount, Instant.now()));
+        limitAssigned(new LimitAssigned(uuid, amount));
     }
 
     private CreditCard limitAssigned(LimitAssigned event) {
@@ -68,7 +70,7 @@ public class CreditCard {
         if (tooManyWithdrawalsInCycle()) {
             throw new IllegalStateException();
         }
-        cardWithdrawn(new CardWithdrawn(uuid, amount, Instant.now()));
+        cardWithdrawn(new CardWithdrawn(uuid, amount));
     }
 
     private CreditCard cardWithdrawn(CardWithdrawn event) {
@@ -87,7 +89,7 @@ public class CreditCard {
     }
 
     void repay(BigDecimal amount) {
-        cardRepaid(new CardRepaid(uuid, amount, Instant.now()));
+        cardRepaid(new CardRepaid(uuid, amount));
     }
 
     private CreditCard cardRepaid(CardRepaid event) {
@@ -98,7 +100,7 @@ public class CreditCard {
 
     void billingCycleClosed() {
         //copy pasting somewhere
-        cycleClosed(new CycleClosed(uuid, Instant.now()));
+        cycleClosed(new CycleClosed(uuid));
     }
 
     private CreditCard cycleClosed(CycleClosed event) {
