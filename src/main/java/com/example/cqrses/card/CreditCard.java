@@ -14,15 +14,15 @@ import java.util.UUID;
 @Entity
 public class CreditCard {
 
-    private int withdrawals;
-
     public CreditCard() {
     }
-
     @Id
     private UUID uuid = UUID.randomUUID();
     private BigDecimal initialLimit;
     private BigDecimal usedLimit = BigDecimal.ZERO;
+
+    @OneToMany(mappedBy = "card", cascade = CascadeType.ALL)
+    private List<Withdrawal> withdrawals = new ArrayList<>();
 
     public CreditCard(UUID uuid) {
         this.uuid = uuid;
@@ -48,11 +48,11 @@ public class CreditCard {
             throw new IllegalStateException();
         }
         usedLimit = usedLimit.add(amount);
-        withdrawals++;
+        withdrawals.add(new Withdrawal(UUID.randomUUID(), this, amount));
     }
 
     private boolean tooManyWithdrawalsInCycle() {
-        return this.withdrawals >= 45;
+        return this.withdrawals.size() >= 45;
     }
 
     private boolean notEnoughMoneyToWithdraw(BigDecimal amount) {
@@ -65,7 +65,7 @@ public class CreditCard {
 
     void billingCycleClosed() {
         //copy pasting somewhere
-        withdrawals = 0;
+        withdrawals.clear();
     }
 
     BigDecimal availableLimit() {
@@ -73,4 +73,7 @@ public class CreditCard {
     }
 
 
+    public List<Withdrawal> getWithdrawals() {
+        return Collections.unmodifiableList(withdrawals);
+    }
 }

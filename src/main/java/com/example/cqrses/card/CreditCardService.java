@@ -26,7 +26,7 @@ class CreditCardService {
     @Transactional
     public int withdrawalsCount(UUID cardId) {
         //null checks
-        return withdrawalRepository.findAllByCard(repository.getById(cardId)).size();
+        return repository.getById(cardId).getWithdrawals().size();
     }
 
     @Transactional
@@ -51,7 +51,6 @@ class CreditCardService {
     public void withdraw(UUID cardId, BigDecimal amount) {
         CreditCard card = repository.getById(cardId);
         card.withdraw(amount);
-        withdrawalRepository.save(new Withdrawal(UUID.randomUUID(), card, amount));
     }
 
     public DailySummaryDto loadDailySummary() {
