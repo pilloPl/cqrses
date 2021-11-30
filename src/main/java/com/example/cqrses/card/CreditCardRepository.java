@@ -26,5 +26,6 @@ interface WithdrawalRepository extends JpaRepository<Withdrawal, UUID> {
             nativeQuery = true)
     List<Withdrawal> findByInitialLimitGreaterThan(BigDecimal limit);
 
+    List<Withdrawal> findAllByCard(CreditCard card);
 }
 
