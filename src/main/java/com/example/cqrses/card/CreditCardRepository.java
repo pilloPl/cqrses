@@ -10,21 +10,8 @@ import java.util.UUID;
 
 interface CreditCardRepository extends JpaRepository<CreditCard, UUID> {
 
-
     List<CreditCard> findByInitialLimitGreaterThan(BigDecimal limit);
 
-
-
 }
 
-interface WithdrawalRepository extends JpaRepository<Withdrawal, UUID> {
-
-    @Query(value = "" +
-            "SELECT * FROM WITHDRAWAL w " +
-            "JOIN CREDIT_CARD c on w.card_id = c.uuid " +
-            "where c.initial_limit > :limit",
-            nativeQuery = true)
-    List<Withdrawal> findByInitialLimitGreaterThan(BigDecimal limit);
-
-}
 

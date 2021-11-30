@@ -16,7 +16,7 @@ class CreditCardControllerE2ETest {
 	CreditCardController creditCardController;
 
 	@Test
-	void canWithdraw() {
+	void canLoadWithdrawalsFromCardWithSpecificLimit() {
 		//given
 		UUID cardLowLimit = creditCardController.createNewCard(new BigDecimal(50));
 		UUID cardLowLimit2 = creditCardController.createNewCard(new BigDecimal(60));

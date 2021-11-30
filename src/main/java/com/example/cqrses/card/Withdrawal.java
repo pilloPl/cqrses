@@ -5,14 +5,11 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
 
-@Entity
 public class Withdrawal {
 
     @Id
     private UUID id;
 
-    @ManyToOne
-    @JoinColumn(name = "card_id")
     private CreditCard card;
 
     private BigDecimal amount;
