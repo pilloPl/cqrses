@@ -2,23 +2,42 @@ package com.example.cqrses.card;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.UUID;
 
 @Entity
 public class Withdrawal {
 
-    private @Id UUID id;
-    private UUID cardId;
+    @Id
+    private UUID id;
+
+    @ManyToOne
+    @JoinColumn(name = "card_id")
+    private CreditCard card;
+
     private BigDecimal amount;
 
-    public Withdrawal(UUID id, UUID cardId, BigDecimal amount) {
+    private Instant date = Instant.now();
+
+    public Withdrawal(UUID id, CreditCard card, BigDecimal amount) {
         this.id = id;
-        this.cardId = cardId;
+        this.card = card;
         this.amount = amount;
     }
 
     public Withdrawal() {
 
     }
+
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    public Instant getDate() {
+        return date;
+    }
+
 }

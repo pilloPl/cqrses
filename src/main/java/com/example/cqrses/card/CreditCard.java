@@ -1,16 +1,27 @@
 package com.example.cqrses.card;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
 
+@Entity
 public class CreditCard {
 
-    private final UUID uuid;
-    private BigDecimal limit;
+    public CreditCard() {
+    }
+    @Id
+    private UUID uuid = UUID.randomUUID();
+    private BigDecimal initialLimit;
     private BigDecimal usedLimit = BigDecimal.ZERO;
+
+    @OneToMany(mappedBy = "card", cascade = CascadeType.ALL)
     private List<Withdrawal> withdrawals = new ArrayList<>();
 
     public CreditCard(UUID uuid) {
@@ -21,11 +32,11 @@ public class CreditCard {
         if (limitWasAlreadyAssigned()) {
             throw new IllegalStateException();
         }
-        limit = amount;
+        initialLimit = amount;
     }
 
     private boolean limitWasAlreadyAssigned() {
-        return limit != null;
+        return initialLimit != null;
     }
 
     public void withdraw(BigDecimal amount) {
@@ -37,7 +48,7 @@ public class CreditCard {
             throw new IllegalStateException();
         }
         usedLimit = usedLimit.add(amount);
-        withdrawals.add(new Withdrawal());
+        withdrawals.add(new Withdrawal(UUID.randomUUID(), this, amount));
     }
 
     private boolean tooManyWithdrawalsInCycle() {
@@ -58,8 +69,11 @@ public class CreditCard {
     }
 
     BigDecimal availableLimit() {
-        return limit.subtract(usedLimit);
+        return initialLimit.subtract(usedLimit);
     }
 
 
+    public List<Withdrawal> getWithdrawals() {
+        return Collections.unmodifiableList(withdrawals);
+    }
 }
