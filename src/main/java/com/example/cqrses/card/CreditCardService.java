@@ -4,10 +4,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 class CreditCardService {
@@ -27,7 +25,7 @@ class CreditCardService {
     @Transactional
     public List<WithdrawalDto> loadWithdrawalsFromCardsWithLimitGreaterThan(BigDecimal limit) {
         //TODO
-        return Collections.emptyList();
+        return null;
     }
 
     UUID createNewCard(BigDecimal limit) {
