@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.UUID;
 
 
+@Entity
 public class CreditCard {
 
     public CreditCard() {
@@ -21,6 +22,7 @@ public class CreditCard {
     private BigDecimal initialLimit;
     private BigDecimal usedLimit = BigDecimal.ZERO;
 
+    @OneToMany(mappedBy = "card", cascade = CascadeType.ALL)
     private List<Withdrawal> withdrawals = new ArrayList<>();
 
     public CreditCard(UUID uuid) {
