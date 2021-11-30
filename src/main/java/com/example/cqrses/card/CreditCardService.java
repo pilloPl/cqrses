@@ -59,13 +59,18 @@ class CreditCardService {
 
     @Transactional
     public void repay(UUID cardId, BigDecimal amount, String terminal, String location, String attachment) {
-        //TODO
+        CreditCard card = repository.getById(cardId);
+        card.repay(amount);
+        repaymentRepository.save(new Repayment(UUID.randomUUID(), cardId, amount, location, terminal, attachment));
     }
 
     @Transactional
     public List<RepaymentDto> loadRepayments() {
-        //TODO
-        return null;
+        return repaymentRepository
+                .findAll()
+                .stream()
+                .map(RepaymentDto::new)
+                .collect(Collectors.toList());
     }
 
     @Transactional

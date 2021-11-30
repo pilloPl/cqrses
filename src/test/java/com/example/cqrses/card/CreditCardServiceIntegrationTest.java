@@ -26,7 +26,7 @@ class CreditCardServiceIntegrationTest {
 		creditCardService.withdraw(newCard, BigDecimal.TEN);
 
 		//then
-		assertEquals(2, creditCardService.withdrawalsCount(newCard));
+		assertEquals(3, creditCardService.withdrawalsCount(newCard));
 	}
 
 }
