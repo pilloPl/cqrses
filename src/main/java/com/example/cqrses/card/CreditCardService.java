@@ -6,17 +6,17 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
-import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 class CreditCardService {
 
     private final CreditCardRepository repository;
+    private final WithdrawalRepository withdrawalRepository;
 
-    CreditCardService(CreditCardRepository repository) {
+    CreditCardService(CreditCardRepository repository, WithdrawalRepository withdrawalRepository) {
         this.repository = repository;
+        this.withdrawalRepository = withdrawalRepository;
     }
 
     @Transactional
@@ -28,10 +28,9 @@ class CreditCardService {
     @Transactional
     public List<WithdrawalDto> loadWithdrawalsFromCardsWithLimitGreaterThan(BigDecimal limit) {
         //null checks
-        return repository
+        return withdrawalRepository
                 .findByInitialLimitGreaterThan(limit)
                 .stream()
-                .flatMap(c -> c.getWithdrawals().stream())
                 .map(WithdrawalDto::new)
                 .collect(Collectors.toList());
     }
