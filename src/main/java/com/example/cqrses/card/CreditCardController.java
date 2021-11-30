@@ -1,13 +1,10 @@
 package com.example.cqrses.card;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Controller
 class CreditCardController {
@@ -37,6 +34,20 @@ class CreditCardController {
     //HTTP Mappings
     public DailySummaryDto loadDailySummary() {
         return service.loadDailySummary();
+    }
+
+    //HTTP Mappings
+    public void repay(UUID cardId, BigDecimal amount, String location, String terminal, String attachment) {
+        service.repay(cardId, amount, location, terminal, attachment);
+    }
+
+
+    public List<RepaymentDto> loadRepayments() {
+        return service.loadRepayments();
+    }
+
+    public BigDecimal getAvailableLimit(UUID cardId) {
+        return service.getAvailableLimit(cardId);
     }
 
 }

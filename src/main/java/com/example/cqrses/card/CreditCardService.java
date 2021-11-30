@@ -13,10 +13,14 @@ class CreditCardService {
 
     private final CreditCardRepository repository;
     private final WithdrawalRepository withdrawalRepository;
+    private final RepaymentRepository repaymentRepository;
+    private final DailySummaryCreator dailySummaryCreator;
 
-    CreditCardService(CreditCardRepository repository, WithdrawalRepository withdrawalRepository) {
+    CreditCardService(CreditCardRepository repository, WithdrawalRepository withdrawalRepository, RepaymentRepository repaymentRepository, DailySummaryCreator dailySummaryCreator) {
         this.repository = repository;
         this.withdrawalRepository = withdrawalRepository;
+        this.repaymentRepository = repaymentRepository;
+        this.dailySummaryCreator = dailySummaryCreator;
     }
 
     @Transactional
@@ -50,6 +54,22 @@ class CreditCardService {
     }
 
     public DailySummaryDto loadDailySummary() {
+        return dailySummaryCreator.load();
+    }
+
+    @Transactional
+    public void repay(UUID cardId, BigDecimal amount, String terminal, String location, String attachment) {
+        //TODO
+    }
+
+    @Transactional
+    public List<RepaymentDto> loadRepayments() {
+        //TODO
         return null;
+    }
+
+    @Transactional
+    public BigDecimal getAvailableLimit(UUID cardId) {
+        return repository.getById(cardId).availableLimit();
     }
 }

@@ -9,8 +9,6 @@ public class DailySummaryDto {
 
     Instant date;
 
-    BigDecimal amount;
-
     List<WithdrawalDto> withdrawals;
 
     List<RepaymentDto> repayments;
@@ -23,6 +21,3 @@ class CreditCardOwnerDto {
 
 }
 
-class RepaymentDto {
-
-}
