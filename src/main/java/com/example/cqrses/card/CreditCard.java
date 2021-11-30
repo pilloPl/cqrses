@@ -16,6 +16,7 @@ public class CreditCard {
 
     public CreditCard() {
     }
+
     @Id
     private UUID uuid = UUID.randomUUID();
     private BigDecimal initialLimit;

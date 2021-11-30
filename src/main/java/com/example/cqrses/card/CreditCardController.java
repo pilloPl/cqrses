@@ -33,4 +33,10 @@ class CreditCardController {
     public void withdraw(UUID cardId, BigDecimal amount) {
         service.withdraw(cardId, amount);
     }
+
+    //HTTP Mappings
+    public DailySummaryDto loadDailySummary() {
+        return service.loadDailySummary();
+    }
+
 }

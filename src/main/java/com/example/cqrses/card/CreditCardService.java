@@ -48,4 +48,8 @@ class CreditCardService {
         CreditCard card = repository.getById(cardId);
         card.withdraw(amount);
     }
+
+    public DailySummaryDto loadDailySummary() {
+        return null;
+    }
 }
