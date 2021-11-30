@@ -1,14 +1,15 @@
 package com.example.cqrses.card;
 
 import com.example.cqrses.card.events.*;
+import io.vavr.API;
+import io.vavr.Predicates;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.*;
+
+import static io.vavr.API.$;
+import static io.vavr.API.Case;
 
 
 public class CreditCard {
@@ -28,7 +29,18 @@ public class CreditCard {
     }
 
     public static CreditCard recreateFrom(UUID uuid, List<DomainEvent> events) {
-        return null;
+        return io.vavr.collection.List.ofAll(events)
+                .foldLeft(new CreditCard(uuid), (creditCard, domainEvent) -> creditCard
+                .handleNext(domainEvent));
+    }
+
+    private CreditCard handleNext(DomainEvent domainEvent) {
+        return API.Match(domainEvent).of(
+                Case($(Predicates.instanceOf(LimitAssigned.class)), this::limitAssigned),
+                Case($(Predicates.instanceOf(CardWithdrawn.class)), this::cardWithdrawn),
+                Case($(Predicates.instanceOf(CardRepaid.class)), this::cardRepaid),
+                Case($(Predicates.instanceOf(CycleClosed.class)), this::cycleClosed)
+        );
     }
 
     public void assignLimit(BigDecimal amount) {
@@ -38,9 +50,10 @@ public class CreditCard {
         limitAssigned(new LimitAssigned(uuid, amount, Instant.now()));
     }
 
-    private void limitAssigned(LimitAssigned event) {
+    private CreditCard limitAssigned(LimitAssigned event) {
         initialLimit = event.getAmount();
         events.add(event);
+        return this;
     }
 
     private boolean limitWasAlreadyAssigned() {
@@ -58,10 +71,11 @@ public class CreditCard {
         cardWithdrawn(new CardWithdrawn(uuid, amount, Instant.now()));
     }
 
-    private void cardWithdrawn(CardWithdrawn event) {
+    private CreditCard cardWithdrawn(CardWithdrawn event) {
         usedLimit = usedLimit.add(event.getAmount());
         withdrawals++;
         events.add(event);
+        return this;
     }
 
     private boolean tooManyWithdrawalsInCycle() {
@@ -76,9 +90,10 @@ public class CreditCard {
         cardRepaid(new CardRepaid(uuid, amount, Instant.now()));
     }
 
-    private void cardRepaid(CardRepaid event) {
+    private CreditCard cardRepaid(CardRepaid event) {
         usedLimit = usedLimit.subtract(event.getAmount());
         events.add(event);
+        return this;
     }
 
     void billingCycleClosed() {
@@ -86,9 +101,10 @@ public class CreditCard {
         cycleClosed(new CycleClosed(uuid, Instant.now()));
     }
 
-    private void cycleClosed(CycleClosed event) {
+    private CreditCard cycleClosed(CycleClosed event) {
         withdrawals = 0;
         events.add(event);
+        return this;
     }
 
     BigDecimal availableLimit() {
