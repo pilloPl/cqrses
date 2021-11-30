@@ -18,7 +18,7 @@ class CreditCardRepositoryTest {
 
 	@Test
 	@Transactional //just for the sake of the exercise
-	void canWithdraw() {
+	void canSaveAndLoad() {
 		//given
 		UUID uuid = UUID.randomUUID();
 		CreditCard card = new CreditCard(uuid);
